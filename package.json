@@ -1,0 +1,80 @@
+{
+  "name": "nexus",
+  "private": true,
+  "description": "",
+  "license": "",
+  "sideEffects": false,
+  "scripts": {
+    "build": "run-s build:*",
+    "build:css": "npm run generate:css -- --minify",
+    "build:remix": "remix build",
+    "dev": "run-p dev:*",
+    "dev:css": "npm run generate:css -- --watch",
+    "dev:remix": "remix dev",
+    "format": "prettier --write .",
+    "generate:css": "tailwindcss -o ./app/styles/tailwind.css",
+    "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
+    "seed": "ts-node ./prisma/seed.ts",
+    "setup": "prisma generate && prisma db push",
+    "start": "remix-serve build",
+    "typecheck": "tsc --noEmit",
+    "validate": "run-p lint typecheck"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "pretty-quick --staged"
+    }
+  },
+  "dependencies": {
+    "@algolia/recommend": "^4.14.2",
+    "@algolia/recommend-react": "^1.6.0",
+    "@prisma/client": "^4.2.1",
+    "@remix-run/node": "^1.5.1",
+    "@remix-run/react": "^1.5.1",
+    "@remix-run/vercel": "^1.6.3",
+    "@vercel/node": "^1.15.4",
+    "algoliasearch": "^4.14.2",
+    "argon2": "^0.28.5",
+    "daisyui": "^2.25.0",
+    "dompurify": "^2.4.0",
+    "history": "^5.3.0",
+    "instantsearch.js": "^4.45.0",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "react-instantsearch-hooks-web": "^6.32.1",
+    "react-router-dom": "^6.3.0",
+    "remix": "^1.6.8",
+    "remix-auth": "^3.2.2",
+    "remix-auth-steam": "^1.0.4",
+    "search-insights": "^2.2.1",
+    "steamapi": "^2.2.0",
+    "tiny-invariant": "^1.2.0",
+    "zod": "^3.17.3"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.18.6",
+    "@faker-js/faker": "^7.2.0",
+    "@remix-run/dev": "^1.5.1",
+    "@remix-run/eslint-config": "^1.5.1",
+    "@remix-run/serve": "^1.6.3",
+    "@tailwindcss/forms": "^0.5.2",
+    "@tailwindcss/typography": "^0.5.7",
+    "@types/dompurify": "^2.3.4",
+    "@types/react": "^17.0.45",
+    "@types/react-dom": "^17.0.17",
+    "babel-loader": "^8.2.5",
+    "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
+    "happy-dom": "^5.2.0",
+    "husky": "^8.0.1",
+    "npm-run-all": "^4.1.5",
+    "pretty-quick": "^3.1.3",
+    "prisma": "^4.2.1",
+    "tailwindcss": "^3.0.24",
+    "ts-node": "^10.8.1",
+    "typescript": "^4.6.4"
+  },
+  "engines": {
+    "node": ">=16"
+  }
+}

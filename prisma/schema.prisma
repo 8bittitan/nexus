@@ -1,0 +1,65 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+enum ProviderName {
+  Steam
+  Epic
+}
+
+model User {
+  id String @id @default(cuid())
+
+  profiles Profile[]
+  games    Game[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([id])
+}
+
+model Profile {
+  id String @id @default(cuid())
+
+  providerId   String
+  providerName ProviderName
+  name         String?
+  avatar       String?
+  displayName  String?
+
+  user   User   @relation(fields: [userId], onDelete: Cascade, references: [id])
+  userId String
+
+  @@index([id, userId])
+}
+
+model Game {
+  id          String @id @default(cuid())
+  name        String
+  steamId     String @unique
+  playtime    Float
+  description String @db.Text
+  // comma separated string
+  // Bungie,high noon,vicarious
+  developers  String
+  // comma separated string
+  // Bungie,Activision,Sony
+  publishers  String
+  // comma separated string
+  // Shooter,RPG,MMO
+  genres      String
+  image       String
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId      String
+}
