@@ -5,7 +5,6 @@ import { Form, Link } from '@remix-run/react';
 import { useState } from 'react';
 
 import Container from '~/components/Container';
-import Logo from '~/assets/logo.png';
 
 type Props = {
   user: UserSession | undefined;
@@ -18,7 +17,7 @@ const Nav: FC<Props> = ({ user }) => {
     <header className="bg-base-300" data-test="navigation">
       <Container classes="navbar">
         <Link to={user ? '/library' : '/'} className="flex-1">
-          <img className="h-8" src={Logo} alt="Nexus" />
+          <span className="text-3xl text-primary">Nexus</span>
         </Link>
 
         <nav className="flex-none">

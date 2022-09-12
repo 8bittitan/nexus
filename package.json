@@ -63,6 +63,7 @@
     "@types/react": "^17.0.45",
     "@types/react-dom": "^17.0.17",
     "babel-loader": "^8.2.5",
+    "dotenv": "^16.0.2",
     "eslint": "^8.15.0",
     "eslint-config-prettier": "^8.5.0",
     "happy-dom": "^5.2.0",

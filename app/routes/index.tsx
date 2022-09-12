@@ -1,4 +1,13 @@
+import type { LoaderFunction } from '@remix-run/node';
 import { Form } from '@remix-run/react';
+
+import { authenticator } from '~/utils/auth.server';
+
+export const loader: LoaderFunction = async ({ request }) => {
+  return await authenticator.isAuthenticated(request, {
+    successRedirect: '/library',
+  });
+};
 
 export default function Index() {
   return (

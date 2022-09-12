@@ -1,6 +1,7 @@
 import invariant from 'tiny-invariant';
 
 invariant(process.env.STEAM_API_KEY);
+invariant(process.env.STEAM_RETURN_URL);
 
 invariant(process.env.ALGOLIA_API_KEY);
 invariant(process.env.ALGOLIA_ADMIN_API_KEY);
@@ -8,6 +9,7 @@ invariant(process.env.ALGOLIA_APP_ID);
 invariant(process.env.ALGOLIA_SEARCH_INDEX);
 
 export const steamApiKey = process.env.STEAM_API_KEY;
+export const steamReturnUrl = process.env.STEAM_RETURN_URL;
 
 export const algoliaApiKey = process.env.ALGOLIA_API_KEY;
 export const algoliaAppId = process.env.ALGOLIA_APP_ID;
