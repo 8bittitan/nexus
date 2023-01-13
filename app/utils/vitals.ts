@@ -5,7 +5,7 @@ const VITALS_URL = 'https://vitals.vercel-analytics.com/v1/vitals';
 declare global {
   interface Window {
     ENV?: {
-      VERCEL_ANALYTICS_ID?: string;
+      vercelAnalyticsId?: string;
     };
   }
 }
@@ -17,7 +17,7 @@ const getConnectionSpeed = () => {
 };
 
 const sendToVercel: CLSReportCallback = (metric) => {
-  const analyticsId = window?.ENV?.VERCEL_ANALYTICS_ID;
+  const analyticsId = window?.ENV?.vercelAnalyticsId;
 
   if (!analyticsId) {
     return;
