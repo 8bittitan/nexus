@@ -2,14 +2,13 @@
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["referentialIntegrity"]
+  provider = "prisma-client-js"
 }
 
 datasource db {
-  provider             = "mysql"
-  url                  = env("DATABASE_URL")
-  referentialIntegrity = "prisma"
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 enum ProviderName {
@@ -42,6 +41,7 @@ model Profile {
   userId String
 
   @@index([id, userId])
+  @@index([userId])
 }
 
 model Game {
@@ -62,4 +62,6 @@ model Game {
   image       String
   user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      String
+
+  @@index([userId])
 }
