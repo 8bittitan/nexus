@@ -44,6 +44,7 @@ export default function LibraryIndex() {
   const transition = useTransition();
 
   const isSubmitting = transition.state === 'submitting';
+  const hasGames = games.length > 0;
 
   return (
     <div>
@@ -61,11 +62,18 @@ export default function LibraryIndex() {
           </button>
         </Form>
       </div>
-      <div className="grid  grid-cols-2 lg:grid-cols-3 gap-8">
-        {games.map((game) => (
-          <GameCard key={game.steamId} game={game} />
-        ))}
-      </div>
+      {!hasGames && (
+        <p className="text-lg text-center block pt-8">
+          You have no games added to your library yet!
+        </p>
+      )}
+      {hasGames && (
+        <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
+          {games.map((game) => (
+            <GameCard key={game.steamId} game={game} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }
