@@ -19,3 +19,5 @@ export const algoliaIndexName = process.env.ALGOLIA_SEARCH_INDEX;
 invariant(process.env.SENTRY_DSN);
 
 export const sentryDsn = process.env.SENTRY_DSN;
+
+export const vercelAnalyticsId = process.env.VERCEL_ANALYTICS_ID;

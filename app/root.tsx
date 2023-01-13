@@ -21,6 +21,7 @@ import algoliasearch from 'algoliasearch/lite';
 import aa from 'search-insights';
 import * as Sentry from '@sentry/remix';
 import { useEffect } from 'react';
+import { Analytics } from '@vercel/analytics/react';
 
 import { authenticator } from './utils/auth.server';
 
@@ -32,6 +33,7 @@ import {
   algoliaApiKey,
   algoliaAppId,
   algoliaIndexName,
+  vercelAnalyticsId,
 } from './utils/env.server';
 
 import { sentryDsn } from '~/utils/env.server';
@@ -51,7 +53,10 @@ type LoaderData = {
   apiKey: string;
   appId: string;
   indexName: string;
-  clientSentryDsn: string;
+  ENV: {
+    sentryDsn: string;
+    vercelAnalyticsId?: string;
+  };
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -62,13 +67,15 @@ export const loader: LoaderFunction = async ({ request }) => {
     apiKey: algoliaApiKey,
     appId: algoliaAppId,
     indexName: algoliaIndexName,
-    clientSentryDsn: sentryDsn,
+    ENV: {
+      sentryDsn,
+      vercelAnalyticsId,
+    },
   });
 };
 
 function App() {
-  const { user, apiKey, appId, indexName, clientSentryDsn } =
-    useLoaderData<LoaderData>();
+  const { user, apiKey, appId, indexName, ENV } = useLoaderData<LoaderData>();
 
   const searchClient = algoliasearch(appId, apiKey);
 
@@ -80,7 +87,7 @@ function App() {
 
   useEffect(() => {
     Sentry.init({
-      dsn: clientSentryDsn,
+      dsn: ENV.sentryDsn,
       tracesSampleRate: 1,
       integrations: [
         new Sentry.BrowserTracing({
@@ -92,7 +99,7 @@ function App() {
         }),
       ],
     });
-  }, [clientSentryDsn]);
+  }, [ENV]);
 
   return (
     <html lang="en" className="h-full" data-theme="night">
@@ -113,9 +120,17 @@ function App() {
             <Outlet />
           </Container>
         </InstantSearch>
+        <Analytics />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `window.ENV = ${JSON.stringify({
+              vercelAnalyticsId: ENV.vercelAnalyticsId,
+            })}`,
+          }}
+        />
       </body>
     </html>
   );
