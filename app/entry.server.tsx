@@ -1,10 +1,13 @@
 import type { EntryContext } from '@remix-run/node';
 import { RemixServer } from '@remix-run/react';
-import { renderToString } from 'react-dom/server';
+import { renderToPipeableStream } from 'react-dom/server';
 import * as Sentry from '@sentry/remix';
+import { PassThrough } from 'stream';
+import { Response } from '@remix-run/node';
 
 import { prisma } from '~/utils/db.server';
 import { sentryDsn } from '~/utils/env.server';
+import isbot from 'isbot';
 
 Sentry.init({
   dsn: sentryDsn,
@@ -12,20 +15,49 @@ Sentry.init({
   integrations: [new Sentry.Integrations.Prisma({ client: prisma })],
 });
 
+const ABORT_DELAY = 5000;
+
 export default function handleRequest(
   request: Request,
   responseStatusCode: number,
   responseHeaders: Headers,
   remixContext: EntryContext,
 ) {
-  let markup = renderToString(
-    <RemixServer context={remixContext} url={request.url} />,
-  );
+  const callbackName = isbot(request.headers.get('user-agent'))
+    ? 'onAllReady'
+    : 'onShellReady';
 
-  responseHeaders.set('Content-Type', 'text/html');
+  return new Promise((resolve, reject) => {
+    let didError = false;
 
-  return new Response('<!DOCTYPE html>' + markup, {
-    status: responseStatusCode,
-    headers: responseHeaders,
+    const { pipe, abort } = renderToPipeableStream(
+      <RemixServer context={remixContext} url={request.url} />,
+      {
+        [callbackName]: () => {
+          const body = new PassThrough();
+
+          responseHeaders.set('Content-Type', 'text/html');
+
+          resolve(
+            new Response(body, {
+              headers: responseHeaders,
+              status: didError ? 500 : responseStatusCode,
+            }),
+          );
+
+          pipe(body);
+        },
+        onShellError: (err: unknown) => {
+          reject(err);
+        },
+        onError: (err: unknown) => {
+          didError = true;
+
+          console.error(err);
+        },
+      },
+    );
+
+    setTimeout(abort, ABORT_DELAY);
   });
 }
