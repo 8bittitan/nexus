@@ -1,6 +1,6 @@
 import type { CLSReportCallback } from 'web-vitals';
 
-const VITALS_URL = 'https://analytics.vercel.com/api/v1/track';
+const VITALS_URL = 'https://vitals.vercel-analytics.com/v1/vitals';
 
 declare global {
   interface Window {
