@@ -11,10 +11,16 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useLocation,
+  useMatches,
 } from '@remix-run/react';
 import { json } from '@remix-run/node';
 import type { UserSession } from '@types';
 import { InstantSearch, Configure } from 'react-instantsearch-hooks-web';
+import algoliasearch from 'algoliasearch/lite';
+import aa from 'search-insights';
+import * as Sentry from '@sentry/remix';
+import { useEffect } from 'react';
 
 import { authenticator } from './utils/auth.server';
 
@@ -27,8 +33,8 @@ import {
   algoliaAppId,
   algoliaIndexName,
 } from './utils/env.server';
-import algoliasearch from 'algoliasearch/lite';
-import aa from 'search-insights';
+
+import { sentryDsn } from '~/utils/env.server';
 
 export const links: LinksFunction = () => [
   { href: tailwindStyles, rel: 'stylesheet' },
@@ -45,6 +51,7 @@ type LoaderData = {
   apiKey: string;
   appId: string;
   indexName: string;
+  clientSentryDsn: string;
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
@@ -55,11 +62,13 @@ export const loader: LoaderFunction = async ({ request }) => {
     apiKey: algoliaApiKey,
     appId: algoliaAppId,
     indexName: algoliaIndexName,
+    clientSentryDsn: sentryDsn,
   });
 };
 
-export default function App() {
-  const { user, apiKey, appId, indexName } = useLoaderData<LoaderData>();
+function App() {
+  const { user, apiKey, appId, indexName, clientSentryDsn } =
+    useLoaderData<LoaderData>();
 
   const searchClient = algoliasearch(appId, apiKey);
 
@@ -68,6 +77,22 @@ export default function App() {
     apiKey,
     appId,
   });
+
+  useEffect(() => {
+    Sentry.init({
+      dsn: clientSentryDsn,
+      tracesSampleRate: 1,
+      integrations: [
+        new Sentry.BrowserTracing({
+          routingInstrumentation: Sentry.remixRouterInstrumentation(
+            useEffect,
+            useLocation,
+            useMatches,
+          ),
+        }),
+      ],
+    });
+  }, [clientSentryDsn]);
 
   return (
     <html lang="en" className="h-full" data-theme="night">
@@ -95,3 +120,5 @@ export default function App() {
     </html>
   );
 }
+
+export default Sentry.withSentry(App);
