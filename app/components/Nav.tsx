@@ -3,7 +3,7 @@ import type { UserSession } from '~/types';
 
 import { Form, Link } from '@remix-run/react';
 import { useState } from 'react';
-import { Sun, Moon } from 'lucide-react';
+import { Sun, Moon, Gamepad } from 'lucide-react';
 
 import Container from '~/components/Container';
 import { useTheme } from '~/components/theme';
@@ -21,10 +21,15 @@ const Nav: FC<Props> = ({ user }) => {
   };
 
   return (
-    <header className="py-4" data-test="navigation">
-      <Container classes="flex justify-between">
-        <Link to={user ? '/library' : '/'}>
-          <span className="text-3xl text-primary">Nexus</span>
+    <header
+      className="border-b border-b-slate-200 dark:border-b-slate-700 py-4"
+      data-test="navigation"
+    >
+      <Container classes="flex justify-between items-center">
+        <Link to={user ? '/library' : '/'} className="flex items-center">
+          <span className="sr-only">Nexus</span>
+          <Gamepad className="mr-2 w-10 h-10" />
+          <span className="text-3xl">Nexus</span>
         </Link>
 
         <nav className="flex-none">

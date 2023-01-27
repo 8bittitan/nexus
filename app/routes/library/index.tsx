@@ -1,6 +1,9 @@
 import type { ActionFunction, LoaderFunction } from '@remix-run/node';
 import type { Game } from '@prisma/client';
 import { Form, useLoaderData, useTransition } from '@remix-run/react';
+import { Loader2 } from 'lucide-react';
+import * as Sentry from '@sentry/remix';
+
 import { requiresUser } from '~/http.server';
 import Importer from '~/importer.server';
 import { gamesForUser } from '~/models/game.server';
@@ -27,16 +30,15 @@ export const action: ActionFunction = async ({ request }) => {
   const userProfile = await getProfileForUser(user);
 
   if (!userProfile) {
-    return {};
+    Sentry.captureException(new Error('User imported with Steam profile'));
+    return new Response('');
   }
 
   const importer = new Importer(userProfile);
 
-  console.log('STARTING IMPORT OF GAMES');
   await importer.import();
-  console.log('FINISHED IMPORT OF GAMES');
 
-  return {};
+  return new Response('');
 };
 
 export default function LibraryIndex() {
@@ -49,16 +51,20 @@ export default function LibraryIndex() {
   return (
     <div>
       <div className="flex justify-between items-center mb-8">
-        <h2 className="text-2xl font-bold text-gray-300 tracking-wide">
+        <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-300 tracking-wide">
           Library
         </h2>
         <Form method="post">
           <button
             type="submit"
             disabled={isSubmitting}
-            className="btn btn-outline"
+            className="bg-slate-700 hover:bg-slate-800 text-slate-50 dark:bg-slate-50 dark:hover:bg-slate-200 dark:text-slate-800 rounded-md px-4 py-2"
           >
-            {isSubmitting ? 'Importing...' : 'Import from Steam'}
+            {isSubmitting ? (
+              <Loader2 className="animate-spin" />
+            ) : (
+              'Import from Steam'
+            )}
           </button>
         </Form>
       </div>
@@ -68,7 +74,7 @@ export default function LibraryIndex() {
         </p>
       )}
       {hasGames && (
-        <div className="grid grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-10">
           {games.map((game) => (
             <GameCard key={game.steamId} game={game} />
           ))}
