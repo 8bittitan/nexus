@@ -5,7 +5,7 @@ import type {
   GameWithDetails,
   Genre,
   PossibleGameDetails,
-} from '@types';
+} from '~/types';
 import type { SearchIndex } from 'algoliasearch';
 import SteamAPI from 'steamapi';
 import algoliasearch from 'algoliasearch';

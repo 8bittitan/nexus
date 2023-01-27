@@ -1,5 +1,5 @@
 import type { ChangeEvent, MouseEventHandler } from 'react';
-import type { GameDetails } from '@types';
+import type { GameDetails } from '~/types';
 import type { LoaderFunction } from '@remix-run/node';
 import aa from 'search-insights';
 import { useLayoutEffect } from 'react';

@@ -1,10 +1,12 @@
 import type { FC } from 'react';
-import type { UserSession } from '@types';
+import type { UserSession } from '~/types';
 
 import { Form, Link } from '@remix-run/react';
 import { useState } from 'react';
+import { Sun, Moon } from 'lucide-react';
 
 import Container from '~/components/Container';
+import { useTheme } from '~/components/theme';
 
 type Props = {
   user: UserSession | undefined;
@@ -12,23 +14,32 @@ type Props = {
 
 const Nav: FC<Props> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const { theme, setTheme } = useTheme();
+
+  const toggleTheme = () => {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  };
 
   return (
-    <header className="bg-base-300" data-test="navigation">
-      <Container classes="navbar">
-        <Link to={user ? '/library' : '/'} className="flex-1">
+    <header className="py-4" data-test="navigation">
+      <Container classes="flex justify-between">
+        <Link to={user ? '/library' : '/'}>
           <span className="text-3xl text-primary">Nexus</span>
         </Link>
 
         <nav className="flex-none">
           {user ? (
-            <div className="relative flex items-center">
-              <Link to="/library" className="mr-4">
-                Library
-              </Link>
-              <Link to="/library/search" className="mr-4">
-                Search
-              </Link>
+            <div className="relative flex items-center space-x-6">
+              <Link to="/library">Library</Link>
+              <Link to="/library/search">Search</Link>
+
+              <button onClick={toggleTheme}>
+                <span className="sr-only">
+                  Set theme {theme === 'dark' ? 'light' : 'dark'}
+                </span>
+                {theme === 'dark' ? <Moon /> : <Sun />}
+              </button>
+
               <button
                 type="button"
                 className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"

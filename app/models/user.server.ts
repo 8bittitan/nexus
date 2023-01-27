@@ -1,5 +1,5 @@
 import type { SteamStrategyVerifyParams } from 'remix-auth-steam';
-import type { UserSession } from '@types';
+import type { UserSession } from '~/types';
 
 import { prisma } from '~/utils/db.server';
 

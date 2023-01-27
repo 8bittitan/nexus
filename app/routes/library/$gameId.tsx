@@ -1,6 +1,6 @@
 import type { Game } from '@prisma/client';
 import type { LoaderFunction } from '@remix-run/node';
-import type { AlgoliaGame } from '@types';
+import type { AlgoliaGame } from '~/types';
 import { redirect } from '@remix-run/node';
 import { useLoaderData } from '@remix-run/react';
 import DOMPurify from 'dompurify';

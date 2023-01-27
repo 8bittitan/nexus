@@ -15,17 +15,22 @@ import {
   useMatches,
 } from '@remix-run/react';
 import { json } from '@remix-run/node';
-import type { UserSession } from '@types';
+import type { UserSession } from '~/types';
 import { InstantSearch, Configure } from 'react-instantsearch-hooks-web';
 import algoliasearch from 'algoliasearch/lite';
 import aa from 'search-insights';
 import * as Sentry from '@sentry/remix';
 import { useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
+import InterFont from '@fontsource/inter/variable.css';
+
+import type { Theme } from '~/types/theme';
 
 import { authenticator } from './utils/auth.server';
-
+import { getThemeSession } from '~/utils/session.server';
 import tailwindStyles from './styles/tailwind.css';
+
+import { ThemeProvider } from '~/components/theme';
 
 import Container from '~/components/Container';
 import Nav from '~/components/Nav';
@@ -40,6 +45,7 @@ import { sentryDsn } from '~/utils/env.server';
 
 export const links: LinksFunction = () => [
   { href: tailwindStyles, rel: 'stylesheet' },
+  { href: InterFont, rel: 'stylesheet' },
 ];
 
 export const meta: MetaFunction = () => ({
@@ -53,21 +59,28 @@ type LoaderData = {
   apiKey: string;
   appId: string;
   indexName: string;
+  theme: Theme;
   ENV: {
+    isDevelopment: boolean;
     sentryDsn: string;
     vercelAnalyticsId?: string;
   };
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const user = await authenticator.isAuthenticated(request);
+  const [user, theme] = await Promise.all([
+    authenticator.isAuthenticated(request),
+    getThemeSession(request),
+  ]);
 
   return json({
     user,
     apiKey: algoliaApiKey,
     appId: algoliaAppId,
     indexName: algoliaIndexName,
+    theme,
     ENV: {
+      isDevelopment: process.env.NODE_ENV === 'development',
       sentryDsn,
       vercelAnalyticsId,
     },
@@ -75,7 +88,8 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 function App() {
-  const { user, apiKey, appId, indexName, ENV } = useLoaderData<LoaderData>();
+  const { user, apiKey, appId, indexName, ENV, theme } =
+    useLoaderData<LoaderData>();
 
   const searchClient = algoliasearch(appId, apiKey);
 
@@ -102,7 +116,7 @@ function App() {
   }, [ENV]);
 
   return (
-    <html lang="en" className="h-full" data-theme="night">
+    <html lang="en" className={`h-full ${theme === 'dark' ? 'dark' : ''}`}>
       <head>
         <Meta />
         <link
@@ -112,15 +126,17 @@ function App() {
         />
         <Links />
       </head>
-      <body className="h-full">
+      <body className="min-h-screen text-slate-900 dark:bg-slate-900 dark:text-slate-50 antialiased">
         <InstantSearch searchClient={searchClient} indexName={indexName}>
           <Configure userToken={user?.userId ?? ''} />
-          <Nav user={user} />
+          <ThemeProvider defaultTheme={theme}>
+            <Nav user={user} />
+          </ThemeProvider>
           <Container classes="mt-8">
             <Outlet />
           </Container>
         </InstantSearch>
-        <Analytics />
+        {!ENV.isDevelopment && <Analytics />}
         <ScrollRestoration />
         <Scripts />
         <LiveReload />
