@@ -1,4 +1,4 @@
-import type { UserSession } from '@types';
+import type { UserSession } from '~/types';
 import type { Profile } from '@prisma/client';
 
 import { prisma } from '~/utils/db.server';
