@@ -1,4 +1,5 @@
 import SteamAPI from 'steamapi';
+import * as Sentry from '@sentry/remix';
 
 import env from '~/utils/env.server';
 
@@ -16,7 +17,7 @@ export const getUserGames = async (steamId: string) => {
 
     return games;
   } catch (err) {
-    console.error(err);
+    Sentry.captureException(err);
     return [];
   }
 };
@@ -33,7 +34,7 @@ export const getGameDetails = async (
 
     return game;
   } catch (err) {
-    console.error(err);
+    Sentry.captureException(err);
     return null;
   }
 };

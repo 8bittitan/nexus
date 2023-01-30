@@ -2,6 +2,7 @@ import type { Game } from '@prisma/client';
 import { Link } from '@remix-run/react';
 import DOMPurify from 'dompurify';
 import type { FC } from 'react';
+
 import { truncateText } from '~/utils/truncateText';
 
 type Props = {
@@ -9,11 +10,15 @@ type Props = {
 };
 
 const GameCard: FC<Props> = ({ game }) => {
+  const gameLinkUrl = `./${game.id}`;
+
   return (
     <article className="flex flex-col">
-      <figure className="mb-4">
-        <img src={game.image} alt="" className="rounded-md" />
-      </figure>
+      <Link to={gameLinkUrl}>
+        <figure className="mb-4">
+          <img src={game.image} alt="" className="rounded-md" />
+        </figure>
+      </Link>
       <div className="prose prose-slate dark:prose-invert prose-img:hidden mb-8">
         <h3>{game.name}</h3>
         <div
@@ -25,7 +30,10 @@ const GameCard: FC<Props> = ({ game }) => {
           }}
         />
       </div>
-      <Link className="mt-auto" to={`./${game.id}`}>
+      <Link
+        className="mt-auto underline text-sky-600 hover:text-sky-700 dark:text-sky-500 dark:hover:text-sky-600 transition-colors font-semibold tracking-wide"
+        to={gameLinkUrl}
+      >
         View game details
       </Link>
     </article>

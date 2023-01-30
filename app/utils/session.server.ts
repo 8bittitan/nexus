@@ -10,7 +10,7 @@ export const sessionStorage = createCookieSessionStorage({
     path: '/',
     sameSite: 'lax',
     secrets: [env.SESSION_SECRET],
-    secure: process.env.NODE_ENV === 'production',
+    secure: env.NODE_ENV === 'production',
   },
 });
 

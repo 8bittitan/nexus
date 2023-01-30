@@ -1,4 +1,5 @@
 import { redirect } from '@remix-run/node';
+import * as Sentry from '@sentry/remix';
 
 import { authenticator } from '~/utils/auth.server';
 
@@ -14,7 +15,7 @@ export const requiresUser = async (req: Request) => {
 
     return user;
   } catch (err) {
-    console.error(err);
+    Sentry.captureException(err);
     throw redirect('/login');
   }
 };

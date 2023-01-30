@@ -53,7 +53,7 @@ export default function handleRequest(
         onError: (err: unknown) => {
           didError = true;
 
-          console.error(err);
+          Sentry.captureException(err);
         },
       },
     );

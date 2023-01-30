@@ -119,7 +119,7 @@ function App() {
         />
         <Links />
       </head>
-      <body className="min-h-screen text-slate-900 dark:bg-slate-900 dark:text-slate-50 antialiased">
+      <body className="min-h-screen bg-slate-100 text-slate-900 dark:bg-slate-900 dark:text-slate-50 antialiased">
         <InstantSearch searchClient={searchClient} indexName={indexName}>
           <Configure userToken={user?.userId ?? ''} />
           <ThemeProvider defaultTheme={theme}>
