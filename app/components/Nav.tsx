@@ -2,7 +2,7 @@ import type { FC } from 'react';
 import type { UserSession } from '~/types';
 import * as Dropdown from '@radix-ui/react-dropdown-menu';
 
-import { Form, Link } from '@remix-run/react';
+import { Link } from '@remix-run/react';
 import { useState } from 'react';
 import { Sun, Moon, Gamepad, ChevronDown, ChevronUp } from 'lucide-react';
 
@@ -33,6 +33,17 @@ const Nav: FC<Props> = ({ user }) => {
         </Link>
 
         <nav className="flex-none">
+          {!user && (
+            <button
+              onClick={toggleTheme}
+              className="py-2 px-4 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md font-medium"
+            >
+              <span className="sr-only">
+                Set theme {theme === 'dark' ? 'light' : 'dark'}
+              </span>
+              {theme === 'dark' ? <Moon /> : <Sun />}
+            </button>
+          )}
           {user ? (
             <div className="flex items-center space-x-4">
               <Link
