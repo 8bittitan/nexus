@@ -1,9 +1,10 @@
 import type { FC } from 'react';
 import type { UserSession } from '~/types';
+import * as Dropdown from '@radix-ui/react-dropdown-menu';
 
 import { Form, Link } from '@remix-run/react';
 import { useState } from 'react';
-import { Sun, Moon, Gamepad } from 'lucide-react';
+import { Sun, Moon, Gamepad, ChevronDown, ChevronUp } from 'lucide-react';
 
 import Container from '~/components/Container';
 import { useTheme } from '~/components/theme';
@@ -27,63 +28,78 @@ const Nav: FC<Props> = ({ user }) => {
     >
       <Container classes="flex justify-between items-center">
         <Link to={user ? '/library' : '/'} className="flex items-center">
-          <span className="sr-only">Nexus</span>
           <Gamepad className="mr-2 w-10 h-10" />
           <span className="text-3xl">Nexus</span>
         </Link>
 
         <nav className="flex-none">
           {user ? (
-            <div className="relative flex items-center space-x-6">
-              <Link to="/library">Library</Link>
-              <Link to="/library/search">Search</Link>
+            <div className="flex items-center space-x-4">
+              <Link
+                to="/library"
+                className="py-2 px-4 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 font-medium"
+              >
+                Library
+              </Link>
+              <Link
+                to="/library/search"
+                className="py-2 px-4 rounded-md hover:bg-slate-100 dark:hover:bg-slate-700 font-medium"
+              >
+                Search
+              </Link>
 
-              <button onClick={toggleTheme}>
+              <button
+                onClick={toggleTheme}
+                className="py-2 px-4 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-md font-medium"
+              >
                 <span className="sr-only">
                   Set theme {theme === 'dark' ? 'light' : 'dark'}
                 </span>
                 {theme === 'dark' ? <Moon /> : <Sun />}
               </button>
 
-              <button
-                type="button"
-                className="flex items-center text-sm rounded-full focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800 focus:ring-white"
-                id="user-menu-button"
-                aria-expanded={isOpen ? 'true' : 'false'}
-                aria-haspopup="true"
-                onClick={() => setIsOpen(!isOpen)}
-              >
-                <span className="sr-only">Open user menu</span>
-                <span className="inline-flex pr-4 pl-2">
-                  {user.displayName}
-                </span>
-                {user.avatar && (
-                  <img
-                    className="h-8 w-8 rounded-full"
-                    src={user.avatar}
-                    alt=""
-                  />
-                )}
-              </button>
+              <Dropdown.Root onOpenChange={setIsOpen}>
+                <Dropdown.Trigger asChild>
+                  <button
+                    type="button"
+                    className="flex items-center text-sm focus:outline-none"
+                  >
+                    <span className="sr-only">Open user menu</span>
+                    <span className="inline-flex text-sm font-semibold pr-2">
+                      {user.displayName}
+                    </span>
+                    {isOpen ? (
+                      <ChevronUp className="pr-2" />
+                    ) : (
+                      <ChevronDown className="pr-2" />
+                    )}
+                    {user.avatar && (
+                      <img
+                        className="h-8 w-8 rounded-full"
+                        src={user.avatar}
+                        alt=""
+                      />
+                    )}
+                  </button>
+                </Dropdown.Trigger>
 
-              {isOpen && (
-                <div
-                  className="origin-top-right absolute right-0 top-8 mt-2 w-48 rounded-md shadow-lg py-1 bg-white ring-1 ring-black ring-opacity-5 focus:outline-none"
-                  role="menu"
-                  aria-orientation="vertical"
-                  aria-labelledby="user-menu-button"
-                  tabIndex={-1}
-                >
-                  <Form action="/auth/logout" role="menuitem" tabIndex={-1}>
-                    <button
-                      className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-300 w-full text-left"
-                      type="submit"
-                    >
-                      Logout
-                    </button>
-                  </Form>
-                </div>
-              )}
+                <Dropdown.Portal>
+                  <Dropdown.Content
+                    align="end"
+                    side="bottom"
+                    className="mt-2 w-48 z-50 overflow-hidden rounded-md border border-slate-100 bg-white p-1 text-slate-700 shadow-md dark:border-slate-800 dark:bg-slate-800 dark:text-slate-400"
+                  >
+                    <Dropdown.Item className="focus-visible:outline-none hover:outline-none">
+                      <Link
+                        to="/auth/logout"
+                        className="flex w-full cursor-pointer select-none py-1 px-2 text-sm font-medium outline-none focus:bg-slate-100 dark:focus:bg-slate-700"
+                      >
+                        Logout
+                      </Link>
+                    </Dropdown.Item>
+                  </Dropdown.Content>
+                </Dropdown.Portal>
+              </Dropdown.Root>
             </div>
           ) : null}
         </nav>
