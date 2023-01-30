@@ -1,23 +1,19 @@
-import invariant from 'tiny-invariant';
+import z from 'zod';
 
-invariant(process.env.STEAM_API_KEY);
-invariant(process.env.STEAM_RETURN_URL);
+const envSchema = z.object({
+  NODE_ENV: z.enum(['development', 'production', 'test']),
+  STEAM_API_KEY: z.string(),
+  STEAM_RETURN_URL: z.string(),
+  ALGOLIA_API_KEY: z.string(),
+  ALGOLIA_ADMIN_API_KEY: z.string(),
+  ALGOLIA_APP_ID: z.string(),
+  ALGOLIA_SEARCH_INDEX: z.string(),
+  SENTRY_DSN: z.string(),
+  VERCEL_ANALYTICS_ID: z.string().optional(),
+  VERCEL_URL: z.string().optional(),
+  SESSION_SECRET: z.string(),
+});
 
-export const steamApiKey = process.env.STEAM_API_KEY;
-export const steamReturnUrl = process.env.STEAM_RETURN_URL;
+const env = envSchema.parse(process.env);
 
-invariant(process.env.ALGOLIA_API_KEY);
-invariant(process.env.ALGOLIA_ADMIN_API_KEY);
-invariant(process.env.ALGOLIA_APP_ID);
-invariant(process.env.ALGOLIA_SEARCH_INDEX);
-
-export const algoliaApiKey = process.env.ALGOLIA_API_KEY;
-export const algoliaAppId = process.env.ALGOLIA_APP_ID;
-export const algoliaAdminApiKey = process.env.ALGOLIA_ADMIN_API_KEY;
-export const algoliaIndexName = process.env.ALGOLIA_SEARCH_INDEX;
-
-invariant(process.env.SENTRY_DSN);
-
-export const sentryDsn = process.env.SENTRY_DSN;
-
-export const vercelAnalyticsId = process.env.VERCEL_ANALYTICS_ID;
+export default env;
