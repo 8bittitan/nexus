@@ -11,10 +11,7 @@ const authenticator = new Authenticator<UserSession | null>(sessionStorage);
 authenticator.use(
   new SteamStrategy(
     {
-      // Vercel does not include link protocol in it's url
-      returnURL: env.VERCEL_URL
-        ? `https://${env.VERCEL_URL}`
-        : env.STEAM_RETURN_URL,
+      returnURL: env.STEAM_RETURN_URL,
       apiKey: env.STEAM_API_KEY,
     },
     async (steamDetails) => {
