@@ -74,7 +74,7 @@ const SearchPage = () => {
   };
 
   return (
-    <div>
+    <div className="pb-16">
       <h1 className="text-slate-900 dark:text-slate-50 font-bold text-4xl mb-4 tracking-wide">
         Search
       </h1>
