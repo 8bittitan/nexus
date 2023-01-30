@@ -33,8 +33,9 @@ import tailwindStyles from './styles/tailwind.css';
 import { ThemeProvider } from '~/components/theme';
 
 import Container from '~/components/Container';
+import GithubIndicator from '~/components/GithubIndicator';
 import Nav from '~/components/Nav';
-import env from './utils/env.server';
+import env from '~/utils/env.server';
 
 export const links: LinksFunction = () => [
   { href: tailwindStyles, rel: 'stylesheet' },
@@ -129,6 +130,7 @@ function App() {
             <Outlet />
           </Container>
         </InstantSearch>
+        <GithubIndicator />
         {!ENV.isDevelopment && <Analytics />}
         <ScrollRestoration />
         <Scripts />
