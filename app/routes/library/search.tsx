@@ -75,16 +75,16 @@ const SearchPage = () => {
 
   return (
     <div>
-      <h1 className="text-white font-bold text-4xl mb-4 tracking-wide">
+      <h1 className="text-slate-900 dark:text-slate-50 font-bold text-4xl mb-4 tracking-wide">
         Search
       </h1>
       <input
-        className="input input-bordered w-full mb-8 text-lg"
+        className="flex w-full mb-8 text-xl rounded-md border border-slate-300 focus:border-slate-400 dark:border-slate-700 dark:focus:border-slate-800 dark:text-slate-50 bg-transparent py-2 px-3 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-2 dark:focus:ring-slate-400 dark:focus:ring-offset-slate-900"
         type="text"
         onChange={handleSearchChange}
         placeholder="Search for some new games!"
       />
-      <div className="flex gap-8">
+      <div className="flex">
         <div className="w-full max-w-xs flex flex-col gap-8">
           <RefinementList
             sectionTitle="Genres"
@@ -101,27 +101,28 @@ const SearchPage = () => {
           {hits.length > 0 && (
             <div className="grid grid-cols-3 gap-8">
               {hits.map((hit) => (
-                <article
-                  key={hit.objectID}
-                  className="card card-bordered shadow-lg"
-                >
-                  <figure>
-                    <img src={hit.header_image} alt="" />
+                <article key={hit.objectID} className="flex flex-col">
+                  <figure className="mb-4">
+                    <img
+                      src={hit.header_image}
+                      alt=""
+                      className="aspect-auto rounded-md"
+                    />
                   </figure>
-                  <div className="card-body prose">
-                    <h2 className="card-title">{hit.name}</h2>
+                  <div className="prose prose-slate dark:prose-invert mb-8">
+                    <h2 className="">{hit.name}</h2>
                     <p>{hit.short_description}</p>
-                    <a
-                      href={`https://store.steampowered.com/app/${hit.steam_appid}`}
-                      data-objectid={hit.objectID}
-                      target="_blank"
-                      rel="noopenerer noreferrer"
-                      className="btn btn-primary"
-                      onClick={handleGameClicked}
-                    >
-                      View on Steam
-                    </a>
                   </div>
+                  <a
+                    href={`https://store.steampowered.com/app/${hit.steam_appid}`}
+                    data-objectid={hit.objectID}
+                    target="_blank"
+                    rel="noopenerer noreferrer"
+                    onClick={handleGameClicked}
+                    className="mt-auto underline text-sky-600 hover:text-sky-700 dark:text-sky-500 dark:hover:text-sky-600 transition-colors font-semibold tracking-wide"
+                  >
+                    View on Steam
+                  </a>
                 </article>
               ))}
             </div>
