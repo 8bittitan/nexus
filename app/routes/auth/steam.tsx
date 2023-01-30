@@ -1,5 +1,4 @@
 import type { LoaderFunction } from '@remix-run/node';
-import * as Sentry from '@sentry/remix';
 
 import { authenticator } from '~/utils/auth.server';
 
@@ -11,7 +10,8 @@ export let loader: LoaderFunction = ({ request }) => {
       throwOnError: true,
     });
   } catch (err) {
-    Sentry.captureException(err);
+    console.log('ERROR ENCOUNTERED');
+    console.error(err);
     return {
       errors: err,
     };

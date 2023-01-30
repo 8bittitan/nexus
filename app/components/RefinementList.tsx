@@ -13,27 +13,26 @@ type Props = {
 const RefinementList: FC<Props> = ({ refinements, handler, sectionTitle }) => {
   return (
     <div>
-      <strong className="block mb-2 text-lg font-semibold">
-        {sectionTitle}
-      </strong>
+      <strong>{sectionTitle}</strong>
       {refinements.map((filter) => (
-        <label
-          key={slugifyRefinement(filter.label)}
-          htmlFor={slugifyRefinement(filter.label)}
-          className="cursor-pointer flex items-center space-x-4 mb-1"
-        >
-          <input
-            type="checkbox"
-            className="h-4 w-4 rounded border-slate-300 focus:border-none text-sky-600 focus:ring-sky-500 transition-colors cursor-pointer"
-            id={slugifyRefinement(filter.label)}
-            name={slugifyRefinement(filter.label)}
-            onChange={() => handler(filter.value)}
-            checked={filter.isRefined}
-          />
-          <span>
-            {filter.label} {filter.count > 1 && <span>({filter.count})</span>}
-          </span>
-        </label>
+        <div key={slugifyRefinement(filter.label)} className="form-control">
+          <label
+            htmlFor={slugifyRefinement(filter.label)}
+            className="label cursor-pointer"
+          >
+            <span className="label-text">
+              {filter.label} ({filter.count})
+            </span>
+            <input
+              type="checkbox"
+              className="checkbox checkbox-sm"
+              id={slugifyRefinement(filter.label)}
+              name={slugifyRefinement(filter.label)}
+              onChange={() => handler(filter.value)}
+              checked={filter.isRefined}
+            />
+          </label>
+        </div>
       ))}
     </div>
   );

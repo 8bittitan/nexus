@@ -15,31 +15,31 @@ import {
   useMatches,
 } from '@remix-run/react';
 import { json } from '@remix-run/node';
-import type { UserSession } from '~/types';
+import type { UserSession } from '@types';
 import { InstantSearch, Configure } from 'react-instantsearch-hooks-web';
 import algoliasearch from 'algoliasearch/lite';
 import aa from 'search-insights';
 import * as Sentry from '@sentry/remix';
 import { useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
-import InterFont from '@fontsource/inter/variable.css';
-
-import type { Theme } from '~/types/theme';
 
 import { authenticator } from './utils/auth.server';
-import { getThemeSession } from '~/utils/session.server';
+
 import tailwindStyles from './styles/tailwind.css';
 
-import { ThemeProvider } from '~/components/theme';
-
 import Container from '~/components/Container';
-import GithubIndicator from '~/components/GithubIndicator';
 import Nav from '~/components/Nav';
-import env from '~/utils/env.server';
+import {
+  algoliaApiKey,
+  algoliaAppId,
+  algoliaIndexName,
+  vercelAnalyticsId,
+} from './utils/env.server';
+
+import { sentryDsn } from '~/utils/env.server';
 
 export const links: LinksFunction = () => [
   { href: tailwindStyles, rel: 'stylesheet' },
-  { href: InterFont, rel: 'stylesheet' },
 ];
 
 export const meta: MetaFunction = () => ({
@@ -53,37 +53,29 @@ type LoaderData = {
   apiKey: string;
   appId: string;
   indexName: string;
-  theme: Theme;
   ENV: {
-    isDevelopment: boolean;
     sentryDsn: string;
     vercelAnalyticsId?: string;
   };
 };
 
 export const loader: LoaderFunction = async ({ request }) => {
-  const [user, theme] = await Promise.all([
-    authenticator.isAuthenticated(request),
-    getThemeSession(request),
-  ]);
+  const user = await authenticator.isAuthenticated(request);
 
   return json({
     user,
-    apiKey: env.ALGOLIA_API_KEY,
-    appId: env.ALGOLIA_APP_ID,
-    indexName: env.ALGOLIA_SEARCH_INDEX,
-    theme,
+    apiKey: algoliaApiKey,
+    appId: algoliaAppId,
+    indexName: algoliaIndexName,
     ENV: {
-      isDevelopment: env.NODE_ENV === 'development',
-      sentryDsn: env.SENTRY_DSN,
-      vercelAnalyticsId: env.VERCEL_ANALYTICS_ID,
+      sentryDsn,
+      vercelAnalyticsId,
     },
   });
 };
 
 function App() {
-  const { user, apiKey, appId, indexName, ENV, theme } =
-    useLoaderData<LoaderData>();
+  const { user, apiKey, appId, indexName, ENV } = useLoaderData<LoaderData>();
 
   const searchClient = algoliasearch(appId, apiKey);
 
@@ -110,7 +102,7 @@ function App() {
   }, [ENV]);
 
   return (
-    <html lang="en" className={`h-full ${theme === 'dark' ? 'dark' : ''}`}>
+    <html lang="en" className="h-full" data-theme="night">
       <head>
         <Meta />
         <link
@@ -120,18 +112,15 @@ function App() {
         />
         <Links />
       </head>
-      <body className="min-h-screen bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-50 antialiased">
+      <body className="h-full">
         <InstantSearch searchClient={searchClient} indexName={indexName}>
           <Configure userToken={user?.userId ?? ''} />
-          <ThemeProvider defaultTheme={theme}>
-            <Nav user={user} />
-          </ThemeProvider>
+          <Nav user={user} />
           <Container classes="mt-8">
             <Outlet />
           </Container>
         </InstantSearch>
-        <GithubIndicator />
-        {!ENV.isDevelopment && <Analytics />}
+        <Analytics />
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

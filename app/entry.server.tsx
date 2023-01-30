@@ -6,11 +6,11 @@ import { PassThrough } from 'stream';
 import { Response } from '@remix-run/node';
 
 import { prisma } from '~/utils/db.server';
-import env from '~/utils/env.server';
+import { sentryDsn } from '~/utils/env.server';
 import isbot from 'isbot';
 
 Sentry.init({
-  dsn: env.SENTRY_DSN,
+  dsn: sentryDsn,
   tracesSampleRate: 1,
   integrations: [new Sentry.Integrations.Prisma({ client: prisma })],
 });
@@ -53,7 +53,7 @@ export default function handleRequest(
         onError: (err: unknown) => {
           didError = true;
 
-          Sentry.captureException(err);
+          console.error(err);
         },
       },
     );
