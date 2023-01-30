@@ -11,6 +11,7 @@ const envSchema = z.object({
   SENTRY_DSN: z.string(),
   VERCEL_ANALYTICS_ID: z.string().optional(),
   VERCEL_URL: z.string().optional(),
+  SESSION_SECRET: z.string(),
 });
 
 const env = envSchema.parse(process.env);

@@ -10,11 +10,11 @@ type Props = {
 
 const GameCard: FC<Props> = ({ game }) => {
   return (
-    <article>
+    <article className="flex flex-col">
       <figure className="mb-4">
         <img src={game.image} alt="" className="rounded-md" />
       </figure>
-      <div className="prose prose-slate dark:prose-invert prose-img:hidden">
+      <div className="prose prose-slate dark:prose-invert prose-img:hidden mb-8">
         <h3>{game.name}</h3>
         <div
           className="break-words"
@@ -24,10 +24,10 @@ const GameCard: FC<Props> = ({ game }) => {
             }),
           }}
         />
-        <Link className="mt-auto" to={`./${game.id}`}>
-          View game details
-        </Link>
       </div>
+      <Link className="mt-auto" to={`./${game.id}`}>
+        View game details
+      </Link>
     </article>
   );
 };

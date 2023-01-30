@@ -1,9 +1,8 @@
 import SteamAPI from 'steamapi';
-import invariant from 'tiny-invariant';
 
-invariant(process.env.STEAM_API_KEY, 'A valid Steam API key is required');
+import env from '~/utils/env.server';
 
-const steam = new SteamAPI(process.env.STEAM_API_KEY);
+const steam = new SteamAPI(env.STEAM_API_KEY);
 
 export const getUserGames = async (steamId: string) => {
   try {
