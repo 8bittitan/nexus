@@ -1,18 +1,21 @@
 import { Authenticator } from 'remix-auth';
 import { SteamStrategy } from 'remix-auth-steam';
-import type { UserSession } from '@types';
+import type { UserSession } from '~/types';
 
 import { sessionStorage } from './session.server';
 import { findOrCreateByProfile } from '~/models/user.server';
-import { steamApiKey, steamReturnUrl } from '~/utils/env.server';
+import env from '~/utils/env.server';
 
 const authenticator = new Authenticator<UserSession | null>(sessionStorage);
 
 authenticator.use(
   new SteamStrategy(
     {
-      returnURL: steamReturnUrl,
-      apiKey: steamApiKey,
+      // Vercel does not include link protocol in it's url
+      returnURL: env.VERCEL_URL
+        ? `https://${env.VERCEL_URL}`
+        : env.STEAM_RETURN_URL,
+      apiKey: env.STEAM_API_KEY,
     },
     async (steamDetails) => {
       const user = await findOrCreateByProfile(steamDetails);

@@ -1,9 +1,9 @@
 import SteamAPI from 'steamapi';
-import invariant from 'tiny-invariant';
+import * as Sentry from '@sentry/remix';
 
-invariant(process.env.STEAM_API_KEY, 'A valid Steam API key is required');
+import env from '~/utils/env.server';
 
-const steam = new SteamAPI(process.env.STEAM_API_KEY);
+const steam = new SteamAPI(env.STEAM_API_KEY);
 
 export const getUserGames = async (steamId: string) => {
   try {
@@ -17,7 +17,7 @@ export const getUserGames = async (steamId: string) => {
 
     return games;
   } catch (err) {
-    console.error(err);
+    Sentry.captureException(err);
     return [];
   }
 };
@@ -34,7 +34,7 @@ export const getGameDetails = async (
 
     return game;
   } catch (err) {
-    console.error(err);
+    Sentry.captureException(err);
     return null;
   }
 };

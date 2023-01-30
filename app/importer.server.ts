@@ -5,20 +5,16 @@ import type {
   GameWithDetails,
   Genre,
   PossibleGameDetails,
-} from '@types';
+} from '~/types';
 import type { SearchIndex } from 'algoliasearch';
 import SteamAPI from 'steamapi';
 import algoliasearch from 'algoliasearch';
+import * as Sentry from '@sentry/remix';
 
 import { createManyGames } from './models/game.server';
-import {
-  steamApiKey,
-  algoliaAdminApiKey,
-  algoliaAppId,
-  algoliaIndexName,
-} from './utils/env.server';
+import env from './utils/env.server';
 
-const algolia = algoliasearch(algoliaAppId, algoliaAdminApiKey);
+const algolia = algoliasearch(env.ALGOLIA_APP_ID, env.ALGOLIA_ADMIN_API_KEY);
 
 class Importer {
   private steamApi: SteamAPI;
@@ -27,8 +23,8 @@ class Importer {
 
   constructor(profile: Profile) {
     this.profile = profile;
-    this.steamApi = new SteamAPI(steamApiKey);
-    this.algolia = algolia.initIndex(algoliaIndexName);
+    this.steamApi = new SteamAPI(env.STEAM_API_KEY);
+    this.algolia = algolia.initIndex(env.ALGOLIA_SEARCH_INDEX);
   }
 
   private async getUserGames() {
@@ -51,7 +47,14 @@ class Importer {
 
       return [game, gameDetails];
     } catch (err) {
-      console.error(`Could not get game: ${game.appID}`);
+      Sentry.captureException(err, {
+        user: {
+          id: this.profile.userId,
+        },
+        extra: {
+          gameId: game.appID,
+        },
+      });
       return [game, null];
     }
   }
@@ -93,32 +96,22 @@ class Importer {
 
   public async import() {
     try {
-      console.log('FETCHING USER GAMES');
       const userGames = await this.getUserGames();
-      console.log('COMPLETE FETCHING USER GAMES');
 
-      console.log('FETCHING GAME DETAILS');
       const gamesWithDetails = await Promise.all(
         userGames.map((game) => this.getGameDetails(game)),
       );
-      console.log('COMPLETE FETCHING GAME DETAILS');
 
       const filteredGames = gamesWithDetails.filter(([_, gameDetails]) =>
         Boolean(gameDetails),
       ) as GameWithDetails[];
 
-      console.log('PUTTING GAMES TO DATABASE');
       await this.putGamesToDatabase(filteredGames);
-      console.log('COMPLETE PUTTING GAMES TO DATABASE');
 
-      console.log('PUSHING IMPORTED GAMES TO ALGOLIA');
       const gamesForAlgolia = filteredGames.map(this.putObjectID);
       await this.algolia.saveObjects(gamesForAlgolia);
-      console.log('FINISHED PUSHING IMPORTED GAMES TO ALGOLIA');
-
-      console.log('Games imported successfully');
     } catch (err) {
-      console.error(`ERROR IMPORTING GAMES: ${err}`);
+      Sentry.captureException(err);
     }
   }
 }

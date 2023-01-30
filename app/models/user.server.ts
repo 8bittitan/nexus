@@ -1,5 +1,6 @@
 import type { SteamStrategyVerifyParams } from 'remix-auth-steam';
-import type { UserSession } from '@types';
+import * as Sentry from '@sentry/remix';
+import type { UserSession } from '~/types';
 
 import { prisma } from '~/utils/db.server';
 
@@ -46,7 +47,7 @@ export const findOrCreateByProfile = async (
       avatar: newProfile.avatar,
     };
   } catch (error) {
-    console.error(error);
+    Sentry.captureException(error);
     throw error;
   }
 };
