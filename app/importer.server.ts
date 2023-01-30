@@ -12,14 +12,9 @@ import algoliasearch from 'algoliasearch';
 import * as Sentry from '@sentry/remix';
 
 import { createManyGames } from './models/game.server';
-import {
-  steamApiKey,
-  algoliaAdminApiKey,
-  algoliaAppId,
-  algoliaIndexName,
-} from './utils/env.server';
+import env from './utils/env.server';
 
-const algolia = algoliasearch(algoliaAppId, algoliaAdminApiKey);
+const algolia = algoliasearch(env.ALGOLIA_APP_ID, env.ALGOLIA_ADMIN_API_KEY);
 
 class Importer {
   private steamApi: SteamAPI;
@@ -28,8 +23,8 @@ class Importer {
 
   constructor(profile: Profile) {
     this.profile = profile;
-    this.steamApi = new SteamAPI(steamApiKey);
-    this.algolia = algolia.initIndex(algoliaIndexName);
+    this.steamApi = new SteamAPI(env.STEAM_API_KEY);
+    this.algolia = algolia.initIndex(env.ALGOLIA_SEARCH_INDEX);
   }
 
   private async getUserGames() {

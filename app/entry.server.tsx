@@ -6,11 +6,11 @@ import { PassThrough } from 'stream';
 import { Response } from '@remix-run/node';
 
 import { prisma } from '~/utils/db.server';
-import { sentryDsn } from '~/utils/env.server';
+import env from '~/utils/env.server';
 import isbot from 'isbot';
 
 Sentry.init({
-  dsn: sentryDsn,
+  dsn: env.SENTRY_DSN,
   tracesSampleRate: 1,
   integrations: [new Sentry.Integrations.Prisma({ client: prisma })],
 });

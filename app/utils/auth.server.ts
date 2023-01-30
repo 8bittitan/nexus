@@ -4,15 +4,15 @@ import type { UserSession } from '~/types';
 
 import { sessionStorage } from './session.server';
 import { findOrCreateByProfile } from '~/models/user.server';
-import { steamApiKey, steamReturnUrl } from '~/utils/env.server';
+import env from '~/utils/env.server';
 
 const authenticator = new Authenticator<UserSession | null>(sessionStorage);
 
 authenticator.use(
   new SteamStrategy(
     {
-      returnURL: steamReturnUrl,
-      apiKey: steamApiKey,
+      returnURL: env.VERCEL_URL ?? env.STEAM_RETURN_URL,
+      apiKey: env.STEAM_API_KEY,
     },
     async (steamDetails) => {
       const user = await findOrCreateByProfile(steamDetails);

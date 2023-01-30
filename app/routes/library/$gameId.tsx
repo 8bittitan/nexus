@@ -8,11 +8,7 @@ import recommend from '@algolia/recommend';
 
 import { gameById } from '~/models/game.server';
 import { authenticator } from '~/utils/auth.server';
-import {
-  algoliaIndexName,
-  algoliaApiKey,
-  algoliaAppId,
-} from '~/utils/env.server';
+import env from '~/utils/env.server';
 
 type LoaderData = {
   game: Game;
@@ -37,11 +33,11 @@ export const loader: LoaderFunction = async ({ request, params }) => {
   let relatedGames: AlgoliaGame[] = [];
 
   try {
-    const recommendClient = recommend(algoliaAppId, algoliaApiKey);
+    const recommendClient = recommend(env.ALGOLIA_APP_ID, env.ALGOLIA_API_KEY);
 
     const { results } = await recommendClient.getRelatedProducts<AlgoliaGame>([
       {
-        indexName: algoliaIndexName,
+        indexName: env.ALGOLIA_SEARCH_INDEX,
         objectID: game.steamId,
         maxRecommendations: 3,
       },

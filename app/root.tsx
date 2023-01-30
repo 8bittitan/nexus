@@ -34,14 +34,7 @@ import { ThemeProvider } from '~/components/theme';
 
 import Container from '~/components/Container';
 import Nav from '~/components/Nav';
-import {
-  algoliaApiKey,
-  algoliaAppId,
-  algoliaIndexName,
-  vercelAnalyticsId,
-} from './utils/env.server';
-
-import { sentryDsn } from '~/utils/env.server';
+import env from './utils/env.server';
 
 export const links: LinksFunction = () => [
   { href: tailwindStyles, rel: 'stylesheet' },
@@ -75,14 +68,14 @@ export const loader: LoaderFunction = async ({ request }) => {
 
   return json({
     user,
-    apiKey: algoliaApiKey,
-    appId: algoliaAppId,
-    indexName: algoliaIndexName,
+    apiKey: env.ALGOLIA_API_KEY,
+    appId: env.ALGOLIA_APP_ID,
+    indexName: env.ALGOLIA_SEARCH_INDEX,
     theme,
     ENV: {
-      isDevelopment: process.env.NODE_ENV === 'development',
-      sentryDsn,
-      vercelAnalyticsId,
+      isDevelopment: env.NODE_ENV === 'development',
+      sentryDsn: env.SENTRY_DSN,
+      vercelAnalyticsId: env.VERCEL_ANALYTICS_ID,
     },
   });
 };

@@ -11,7 +11,7 @@ import {
 } from 'react-instantsearch-hooks-web';
 import { useLoaderData } from '@remix-run/react';
 
-import { algoliaIndexName } from '~/utils/env.server';
+import env from '~/utils/env.server';
 import RefinementList from '~/components/RefinementList';
 
 type LoaderData = {
@@ -20,7 +20,7 @@ type LoaderData = {
 
 export const loader: LoaderFunction = async () => {
   return {
-    algoliaIndexName,
+    algoliaIndexName: env.ALGOLIA_SEARCH_INDEX,
   };
 };
 
