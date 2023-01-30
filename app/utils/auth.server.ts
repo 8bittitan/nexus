@@ -13,7 +13,7 @@ authenticator.use(
     {
       // Vercel does not include link protocol in it's url
       returnURL: env.VERCEL_URL
-        ? `https://${env.VERCEL_URL}`
+        ? `https://${env.VERCEL_URL}/auth/steam/callback`
         : env.STEAM_RETURN_URL,
       apiKey: env.STEAM_API_KEY,
     },
