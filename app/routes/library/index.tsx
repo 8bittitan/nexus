@@ -1,28 +1,54 @@
-import type { ActionFunction, LoaderFunction } from '@remix-run/node';
-import type { Game } from '@prisma/client';
+import type {
+  ActionFunction,
+  LoaderArgs,
+  LinksFunction,
+  SerializeFrom,
+} from '@remix-run/node';
+import { json } from '@remix-run/node';
 import { Form, useLoaderData, useTransition } from '@remix-run/react';
 import { Loader2 } from 'lucide-react';
 import * as Sentry from '@sentry/remix';
+import type { DynamicLinksFunction } from 'remix-utils';
 
 import { requiresUser } from '~/http.server';
 import Importer from '~/importer.server';
 import { gamesForUser } from '~/models/game.server';
 import { getProfileForUser } from '~/models/profile.server';
 import GameCard from '~/components/GameCard';
+import { getCloudinaryUrl } from '~/utils/cloudinary';
 
-type LoaderData = {
-  games: Game[];
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
+export async function loader({ request }: LoaderArgs) {
   const user = await requiresUser(request);
 
   const games = await gamesForUser(user.userId);
 
-  return {
+  return json({
     games,
-  };
+  });
+}
+
+export const links: LinksFunction = () => {
+  return [
+    {
+      rel: 'preconnect',
+      href: 'https://res.cloudinary.com',
+    },
+  ];
 };
+
+const dynamicLinks: DynamicLinksFunction<SerializeFrom<typeof loader>> = ({
+  data,
+}) => {
+  const preload_games = data.games.slice(0, 2);
+
+  return preload_games.map((game) => ({
+    rel: 'preload',
+    href: getCloudinaryUrl(game.image, 'large'),
+    as: 'image',
+  }));
+};
+
+export const handle = { dynamicLinks };
 
 export const action: ActionFunction = async ({ request }) => {
   const user = await requiresUser(request);
@@ -42,7 +68,7 @@ export const action: ActionFunction = async ({ request }) => {
 };
 
 export default function LibraryIndex() {
-  const { games } = useLoaderData<LoaderData>();
+  const { games } = useLoaderData<typeof loader>();
   const transition = useTransition();
 
   const isSubmitting = transition.state === 'submitting';

@@ -23,6 +23,7 @@ import * as Sentry from '@sentry/remix';
 import { useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import InterFont from '@fontsource/inter/variable.css';
+import { DynamicLinks } from 'remix-utils';
 
 import type { Theme } from '~/types/theme';
 
@@ -119,7 +120,7 @@ function App() {
           href={`https://${appId}-dsn.algolia.net`}
           rel="preconnect"
         />
-        <link href="https://res.cloudinary.com" rel="preconnect" />
+        <DynamicLinks />
         <Links />
       </head>
       <body className="min-h-screen bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-50 antialiased">
