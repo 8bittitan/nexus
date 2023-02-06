@@ -57,3 +57,27 @@ jobs:
 
       - name: 🔎 Type check
         run: npm run typecheck --if-present
+
+  upload_sourcemaps:
+    name: 🗺️ Upload sourcemaps
+    runs-on: ubuntu-latest
+    steps:
+      - name: 🛑 Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+
+      - name: ⬇️ Checkout repo
+        uses: actions/checkout@v3
+
+      - name: ⎔ Setup node
+        uses: actions/setup-node@v3
+        with:
+          node-version-file: '.nvmrc'
+
+      - name: 📥 Download deps
+        uses: bahmutov/npm-install@v1
+
+      - name: Build
+        run: npm run sourcemaps
+
+      - name: 🗺️ Upload sourcemaps
+        run: node ./node_modules/@sentry/remix/scripts/sentry-upload-sourcemaps.js

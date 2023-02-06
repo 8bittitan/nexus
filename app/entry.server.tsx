@@ -13,6 +13,7 @@ Sentry.init({
   dsn: env.SENTRY_DSN,
   tracesSampleRate: 1,
   integrations: [new Sentry.Integrations.Prisma({ client: prisma })],
+  environment: env.NODE_ENV,
 });
 
 const ABORT_DELAY = 5000;
