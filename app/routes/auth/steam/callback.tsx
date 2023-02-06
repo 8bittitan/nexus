@@ -4,6 +4,6 @@ import { authenticator } from '~/utils/auth.server';
 export let loader: LoaderFunction = ({ request }) => {
   return authenticator.authenticate('steam', request, {
     successRedirect: '/library',
-    failureRedirect: '/login',
+    failureRedirect: '/',
   });
 };

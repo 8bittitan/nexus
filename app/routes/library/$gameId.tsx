@@ -8,8 +8,8 @@ import recommend from '@algolia/recommend';
 import * as Sentry from '@sentry/remix';
 
 import { gameById } from '~/models/game.server';
-import { authenticator } from '~/utils/auth.server';
 import env from '~/utils/env.server';
+import { requiresUser } from '~/http.server';
 
 type LoaderData = {
   game: Game;
@@ -17,11 +17,7 @@ type LoaderData = {
 };
 
 export const loader: LoaderFunction = async ({ request, params }) => {
-  const user = await authenticator.isAuthenticated(request);
-
-  if (!user) {
-    return redirect('/login');
-  }
+  const user = await requiresUser(request);
 
   const gameId = params.gameId as string;
 
