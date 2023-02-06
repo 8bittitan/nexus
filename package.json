@@ -50,6 +50,7 @@
     "remix": "^1.10.1",
     "remix-auth": "^3.4.0",
     "remix-auth-steam": "^1.0.4",
+    "remix-utils": "^6.0.0",
     "search-insights": "^2.2.3",
     "steamapi": "^2.2.0",
     "web-vitals": "^3.1.1",
