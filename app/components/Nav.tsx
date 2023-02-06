@@ -11,7 +11,7 @@ import ThemeToggle from '~/components/theme-toggle';
 import { useTheme } from '~/components/theme';
 
 type Props = {
-  user: UserSession | undefined;
+  user: UserSession | null;
 };
 
 const Nav: FC<Props> = ({ user }) => {

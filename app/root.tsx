@@ -1,8 +1,4 @@
-import type {
-  MetaFunction,
-  LoaderFunction,
-  LinksFunction,
-} from '@remix-run/node';
+import type { MetaFunction, LinksFunction, LoaderArgs } from '@remix-run/node';
 import {
   Links,
   LiveReload,
@@ -15,7 +11,6 @@ import {
   useMatches,
 } from '@remix-run/react';
 import { json } from '@remix-run/node';
-import type { UserSession } from '~/types';
 import { InstantSearch, Configure } from 'react-instantsearch-hooks-web';
 import algoliasearch from 'algoliasearch/lite';
 import aa from 'search-insights';
@@ -24,8 +19,6 @@ import { useEffect } from 'react';
 import { Analytics } from '@vercel/analytics/react';
 import InterFont from '@fontsource/inter/variable.css';
 import { DynamicLinks } from 'remix-utils';
-
-import type { Theme } from '~/types/theme';
 
 import { authenticator } from './utils/auth.server';
 import { getThemeSession } from '~/utils/session.server';
@@ -50,21 +43,8 @@ export const meta: MetaFunction = () => ({
   viewport: 'width=device-width,initial-scale=1',
 });
 
-type LoaderData = {
-  user?: UserSession;
-  apiKey: string;
-  appId: string;
-  indexName: string;
-  theme: Theme;
-  ENV: {
-    isDevelopment: boolean;
-    sentryDsn: string;
-    vercelAnalyticsId?: string;
-  };
-};
-
-export const loader: LoaderFunction = async ({ request }) => {
-  const [user, theme] = await Promise.all([
+export async function loader({ request }: LoaderArgs) {
+  let [user, theme] = await Promise.all([
     authenticator.isAuthenticated(request),
     getThemeSession(request),
   ]);
@@ -76,16 +56,16 @@ export const loader: LoaderFunction = async ({ request }) => {
     indexName: env.ALGOLIA_SEARCH_INDEX,
     theme,
     ENV: {
-      isDevelopment: env.NODE_ENV === 'development',
+      env: env.NODE_ENV,
       sentryDsn: env.SENTRY_DSN,
       vercelAnalyticsId: env.VERCEL_ANALYTICS_ID,
     },
   });
-};
+}
 
 function App() {
   const { user, apiKey, appId, indexName, ENV, theme } =
-    useLoaderData<LoaderData>();
+    useLoaderData<typeof loader>();
 
   const searchClient = algoliasearch(appId, apiKey);
 
@@ -108,6 +88,7 @@ function App() {
           ),
         }),
       ],
+      environment: ENV.env,
     });
   }, [ENV]);
 
@@ -134,7 +115,7 @@ function App() {
           </Container>
         </InstantSearch>
         <GithubIndicator />
-        {!ENV.isDevelopment && <Analytics />}
+        {ENV.env === 'production' && <Analytics />}
         <ScrollRestoration />
         <Scripts />
         <LiveReload />

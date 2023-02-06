@@ -13,6 +13,10 @@ export const requiresUser = async (req: Request) => {
       throw redirect('/');
     }
 
+    Sentry.setContext('user', {
+      id: user.userId,
+    });
+
     return user;
   } catch (err) {
     Sentry.captureException(err);
