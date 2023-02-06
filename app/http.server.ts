@@ -6,16 +6,16 @@ import { authenticator } from '~/utils/auth.server';
 export const requiresUser = async (req: Request) => {
   try {
     const user = await authenticator.isAuthenticated(req, {
-      failureRedirect: '/login',
+      failureRedirect: '/',
     });
 
     if (!user) {
-      throw redirect('/login');
+      throw redirect('/');
     }
 
     return user;
   } catch (err) {
     Sentry.captureException(err);
-    throw redirect('/login');
+    throw redirect('/');
   }
 };

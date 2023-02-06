@@ -16,7 +16,6 @@
     "lint": "eslint --cache --cache-location ./node_modules/.cache/eslint .",
     "seed": "ts-node ./prisma/seed.ts",
     "setup": "prisma generate && prisma db push",
-    "start": "remix-serve build",
     "typecheck": "tsc --noEmit",
     "validate": "run-p lint typecheck"
   },

@@ -11,8 +11,6 @@ export const getUserGames = async (steamId: string) => {
 
     games.sort((a, b) => b.playTime - a.playTime);
 
-    console.dir(games[0]);
-
     await getGameDetails(games[0].appID);
 
     return games;
@@ -29,8 +27,6 @@ export const getGameDetails = async (
 
   try {
     const game = await steam.getGameDetails(appIdAsString);
-
-    console.dir(game);
 
     return game;
   } catch (err) {

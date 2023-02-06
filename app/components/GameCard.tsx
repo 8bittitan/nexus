@@ -4,25 +4,33 @@ import DOMPurify from 'dompurify';
 import type { FC } from 'react';
 
 import { truncateText } from '~/utils/truncateText';
+import GameImage from './GameImage';
+
+const PRIORITY_IMAGE_INDEXES = [0, 1, 2];
 
 type Props = {
   game: Game;
+  index: number;
 };
 
-const GameCard: FC<Props> = ({ game }) => {
+const GameCard: FC<Props> = ({ game, index }) => {
   const gameLinkUrl = `./${game.id}`;
 
   return (
     <article className="flex flex-col">
       <Link to={gameLinkUrl}>
         <figure className="mb-4 aspect-auto">
-          <img src={game.image} alt="" className="rounded-md" width={344} />
+          <GameImage
+            src={game.image}
+            title={game.name}
+            priority={PRIORITY_IMAGE_INDEXES.includes(index)}
+          />
         </figure>
       </Link>
       <div className="prose prose-slate dark:prose-invert prose-img:hidden mb-8">
         <h3>{game.name}</h3>
         <div
-          className="break-words max-w-[344px] md:max-w-none"
+          className="break-words max-w-[320px] md:max-w-none"
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(truncateText(game.description, 200), {
               ALLOWED_TAGS: [],

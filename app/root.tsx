@@ -45,6 +45,7 @@ export const links: LinksFunction = () => [
 export const meta: MetaFunction = () => ({
   charset: 'utf-8',
   title: 'Nexus',
+  description: 'A game library for the modern age',
   viewport: 'width=device-width,initial-scale=1',
 });
 
@@ -118,6 +119,7 @@ function App() {
           href={`https://${appId}-dsn.algolia.net`}
           rel="preconnect"
         />
+        <link href="https://res.cloudinary.com" rel="preconnect" />
         <Links />
       </head>
       <body className="min-h-screen bg-white text-slate-900 dark:bg-slate-900 dark:text-slate-50 antialiased">
