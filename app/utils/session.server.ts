@@ -14,7 +14,20 @@ export const sessionStorage = createCookieSessionStorage({
   },
 });
 
+export const themeSessionStorage = createCookieSessionStorage({
+  cookie: {
+    name: '__next_theme',
+    httpOnly: true,
+    path: '/',
+    sameSite: 'lax',
+    secrets: [env.SESSION_SECRET],
+    secure: env.NODE_ENV === 'production',
+  },
+});
+
 export async function getThemeSession(request: Request): Promise<Theme> {
-  let session = await sessionStorage.getSession(request.headers.get('Cookie'));
+  let session = await themeSessionStorage.getSession(
+    request.headers.get('Cookie'),
+  );
   return session.get('theme') ?? 'dark';
 }

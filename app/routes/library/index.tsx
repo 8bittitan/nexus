@@ -74,7 +74,7 @@ export default function LibraryIndex() {
         </p>
       )}
       {hasGames && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-10 pb-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-10 pb-8">
           {games.map((game) => (
             <GameCard key={game.steamId} game={game} />
           ))}

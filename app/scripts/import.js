@@ -16,7 +16,7 @@ const algoliaIndex = algolia.initIndex(algoliaIndexName);
 function getRandomGames(games) {
   const shuffled = [...games].sort(() => 0.5 - Math.random());
 
-  return shuffled.slice(0, 20);
+  return shuffled.slice(0, 100);
 }
 
 async function getGameDetails(game) {
@@ -35,7 +35,7 @@ function putObjectID(game) {
   };
 }
 
-const go = async () => {
+async function importGames() {
   try {
     const games = getRandomGames(await steam.getAppList());
 
@@ -50,8 +50,14 @@ const go = async () => {
     console.log(`IMPORTED ${gamesForAlgolia.length} GAMES`);
   } catch (err) {
     console.error(err);
-    process.exit(1);
   }
+}
+
+const go = async () => {
+  await importGames();
+  setInterval(async () => {
+    await importGames();
+  }, 30000);
 };
 
 go();

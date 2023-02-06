@@ -11,9 +11,9 @@ export const loader: LoaderFunction = async ({ request }) => {
 
 export default function Index() {
   return (
-    <section className="max-h-fit p-12">
+    <section className="max-h-fit pt-12 md:p-12">
       <div className="text-center">
-        <div className="max-w-lg mx-auto">
+        <div className="md:max-w-lg mx-auto">
           <h1 className="text-5xl font-bold">Welcome to Nexus!</h1>
           <p className="py-6 text-lg">
             The one stop shop for tracking your installed games, and finding new

@@ -5,7 +5,7 @@ import type { Context, Theme } from '~/types/theme';
 
 const ThemeContext = createContext<Context>({
   theme: 'dark',
-  setTheme: () => {},
+  toggleTheme: () => {},
 });
 
 export const ThemeProvider = ({
@@ -27,8 +27,12 @@ export const ThemeProvider = ({
     document.documentElement.classList.toggle('dark', theme === 'dark');
   }, [theme]);
 
+  function toggleTheme() {
+    setTheme(theme === 'dark' ? 'light' : 'dark');
+  }
+
   return (
-    <ThemeContext.Provider value={{ theme, setTheme }}>
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
